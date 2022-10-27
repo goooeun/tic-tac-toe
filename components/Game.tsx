@@ -1,11 +1,20 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useState } from 'react';
+import axios from 'axios';
+
 import useHistory from '../utils/hooks/useHistory';
 import useStepNumber from '../utils/hooks/useStepNumber';
 import useXIsNext from '../utils/hooks/useXIsNext';
 import useActions from '../utils/hooks/useActions';
 import calculateWinner from '../utils/calculateWinner';
+
 import Board from './Board';
+import SavedGameListPopup from './SavedGameListPopup';
+
+import { MdSave, MdDownload } from 'react-icons/md';
+import Link from 'next/link';
 
 function Game() {
     const history = useHistory();
@@ -23,40 +32,94 @@ function Game() {
             changeStage(move);
         };
         return (
-            <li key={move}>
-                <button onClick={clickMove}>{desc}</button>
-            </li>
+            <button key={move} onClick={clickMove}>
+                {desc}
+            </button>
         );
     });
 
     const status = winner
-        ? 'Winner: ' + winner
+        ? 'Congratulations🎉 Winner is ' + winner
         : 'Next player: ' + (xIsNext ? 'X' : 'O');
 
+    const [isOpen, setIsOpen] = useState(false);
+    const openPopup = () => {
+        setIsOpen(true);
+    };
+    const closePopup = () => {
+        setIsOpen(false);
+    };
+
+    const saveGame = () => {
+        if (confirm('Do you want to save the game?')) {
+            console.log('game save!');
+        }
+    };
+
     return (
-        <div
-            css={css`
-                display: flex;
-                flex-direction: row;
-            `}
-        >
+        <GameLayout>
+            <ButtonGroup>
+                <button onClick={saveGame}>
+                    <MdSave />
+                    SAVE
+                </button>
+                <button onClick={openPopup}>
+                    <MdDownload />
+                    LOAD
+                </button>
+                <Link href="/">
+                    <a className="button">HOME</a>
+                </Link>
+            </ButtonGroup>
             <div
                 css={css`
-                    margin-left: 20px;
+                    font-size: 1.3em;
+                    font-weight: bold;
                 `}
             >
-                <Board squares={current.squares} />
+                {status}
             </div>
+            <Board squares={current.squares} />
             <div
                 css={css`
-                    margin-left: 20px;
+                    display: flex;
+                    flex-direction: column;
                 `}
             >
-                <div>{status}</div>
-                <ol>{moves}</ol>
+                {moves}
             </div>
-        </div>
+            {isOpen && <SavedGameListPopup closePopup={closePopup} />}
+        </GameLayout>
     );
 }
+
+const GameLayout = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+`;
+
+const ButtonGroup = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+`;
+
+interface GameData {
+    id: number;
+    stepNumber: number;
+    xIsNext: boolean;
+    data: (string | null)[];
+    date: Date;
+}
+
+export const getServerSideProps = async () => {
+    const response = await axios.get('http://localhost:3000/api/list');
+    const gameData = response.data;
+    return {
+        props: { gameData },
+    };
+};
 
 export default Game;

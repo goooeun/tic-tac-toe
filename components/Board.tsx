@@ -1,14 +1,6 @@
 import styled from '@emotion/styled';
 import Square from './Square';
 
-const BoardRow = styled.div`
-    &:after {
-        clear: both;
-        content: '';
-        display: table;
-    }
-`;
-
 type BoardProps = {
     squares: (string | null)[];
 };
@@ -38,5 +30,13 @@ const Board = ({ squares }: BoardProps) => {
         </div>
     );
 };
+
+const BoardRow = styled.div`
+    &:after {
+        clear: both;
+        content: '';
+        display: table;
+    }
+`;
 
 export default Board;
