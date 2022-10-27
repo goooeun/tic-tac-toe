@@ -2,6 +2,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import router from 'next/router';
 import axios from 'axios';
 
 import useHistory from '../utils/hooks/useHistory';
@@ -13,7 +14,7 @@ import calculateWinner from '../utils/calculateWinner';
 import Board from './Board';
 import SavedGameListPopup from './SavedGameListPopup';
 
-import { MdSave, MdDownload } from 'react-icons/md';
+import { MdSave, MdDownload, MdHome } from 'react-icons/md';
 import Link from 'next/link';
 
 function Game() {
@@ -56,6 +57,12 @@ function Game() {
         }
     };
 
+    const handleBackButton = () => {
+        if (confirm('The game is not saved. Are you really going home?')) {
+            router.push('/');
+        }
+    };
+
     return (
         <GameLayout>
             <ButtonGroup>
@@ -67,9 +74,10 @@ function Game() {
                     <MdDownload />
                     LOAD
                 </button>
-                <Link href="/">
-                    <a className="button">HOME</a>
-                </Link>
+                <button onClick={handleBackButton}>
+                    <MdHome />
+                    HOME
+                </button>
             </ButtonGroup>
             <div
                 css={css`

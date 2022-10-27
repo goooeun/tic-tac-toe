@@ -1,9 +1,26 @@
 body {
     font: 14px 'Century Gothic', Futura, sans-serif;
-    margin: 20px;
+    margin: 20px auto;
+    width: 500px;
 }
 
-ol,
-ul {
-    padding-left: 30px;
+button,
+.button {
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px 10px;
+    border: none;
+    text-decoration: none;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+}
+
+button:hover,
+.button:hover {
+    background-color: #666;
+    cursor: pointer;
 }

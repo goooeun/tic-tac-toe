@@ -27,15 +27,28 @@ const SavedGameListPopup: React.FC<Props> = ({ closePopup }) => {
                             padding-left: 0;
                         `}
                     >
-                        {gameList.map((game: SavedGame) => (
-                            <ListItem key={game.id} onClick={() => loadGame}>
-                                <div>Round : {game.stepNumber}</div>
-                                <div>
-                                    Next Player : {game.xIsNext ? 'X' : 'O'}
-                                </div>
-                                <div>Saved Time : {game.date}</div>
-                            </ListItem>
-                        ))}
+                        {gameList.length > 0 ? (
+                            gameList.map((game: SavedGame) => (
+                                <ListItem
+                                    key={game.id}
+                                    onClick={() => loadGame}
+                                >
+                                    <div>Round : {game.stepNumber}</div>
+                                    <div>
+                                        Next Player : {game.xIsNext ? 'X' : 'O'}
+                                    </div>
+                                    <div>Saved Time : {game.date}</div>
+                                </ListItem>
+                            ))
+                        ) : (
+                            <div
+                                css={css`
+                                    text-align: center;
+                                `}
+                            >
+                                No data
+                            </div>
+                        )}
                     </ul>
                 </PopupBody>
             </PopupView>
@@ -68,7 +81,7 @@ const PopupView = styled.div`
     flex-direction: column;
     background-color: #fff;
     width: 300px;
-    margin: 150px 20px;
+    margin: 150px auto;
     padding: 20px 16px;
     border-radius: 4px;
     position: relative;
@@ -81,12 +94,16 @@ const PopupHead = styled.div`
 
 const CloseButton = styled.button`
     position: absolute;
+    top: 14px;
     right: 16px;
     background-color: #fff;
+    color: #000;
     border: none;
-    font-size: 1.125rem;
+    font-size: 1.5rem;
+    padding: 0;
     cursor: pointer;
     &:hover {
+        background-color: #fff;
         color: #888;
     }
 `;
