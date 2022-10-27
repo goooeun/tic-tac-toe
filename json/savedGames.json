@@ -1,0 +1,18 @@
+{
+    "games": [
+        {
+            "id": 1,
+            "stepNumber": 2,
+            "xIsNext": true,
+            "data": "[null, null, 'X', null, null, null, 'X', 'O', null]",
+            "date": "20221022"
+        },
+        {
+            "id": 2,
+            "stepNumber": 3,
+            "xIsNext": false,
+            "data": "['O', null, null, 'O', 'X', null, null, 'X', null]",
+            "date": "20221023"
+        }
+    ]
+}
