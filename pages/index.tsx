@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import Game from '../components/Game';
-import GameStateProvider from '../providers/GameStateProvider';
 
 const Home: NextPage = () => {
     return (

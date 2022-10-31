@@ -15,16 +15,20 @@ import Board from './Board';
 import { GameData } from '../types/game';
 
 import { MdSave, MdDownload, MdHome } from 'react-icons/md';
+import useSavedData from '../utils/hooks/useSavedData';
+import useSavedDataActions from '../utils/hooks/useSavedDataActions';
 
 function Game() {
     const history = useHistory();
     const stepNumber = useStepNumber();
     const xIsNext = useXIsNext();
 
-    const { changeStage, saveLoadGameData } = useActions();
+    const { changeStage, loadGame } = useActions();
     const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
 
+    const savedGameData = useSavedData();
+    const { saveGame } = useSavedDataActions();
     const [gameData, setGameData] = useState<GameData>();
 
     const fetchData = async () => {
@@ -37,8 +41,12 @@ function Game() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (savedGameData.stepNumber == 0) {
+            fetchData();
+        } else {
+            setGameData(savedGameData);
+        }
+    }, [savedGameData]);
 
     const moves = history.map((step: number, move: number) => {
         const desc = move ? 'Go to move #' + move : 'Go to game start';
@@ -58,19 +66,20 @@ function Game() {
 
     const [save, setSave] = useState(false);
 
-    const saveGame = () => {
+    const clickSaveGame = () => {
         if (confirm('Do you want to save the game?')) {
             setSave(true);
-            saveLoadGameData({
+            const saveData: GameData = {
                 history,
                 stepNumber,
                 xIsNext,
-            });
+            };
+            saveGame(saveData);
         }
     };
-    const loadGame = () => {
+    const clickLoadGame = () => {
         if (confirm('Do you want to load the game?')) {
-            saveLoadGameData(gameData);
+            loadGame(gameData);
         }
     };
 
@@ -88,13 +97,13 @@ function Game() {
         <GameLayout>
             <ButtonGroup>
                 <button
-                    onClick={saveGame}
+                    onClick={clickSaveGame}
                     disabled={stepNumber == 0 ? true : false}
                 >
                     <MdSave />
                     SAVE
                 </button>
-                <button onClick={loadGame}>
+                <button onClick={clickLoadGame}>
                     <MdDownload />
                     LOAD
                 </button>

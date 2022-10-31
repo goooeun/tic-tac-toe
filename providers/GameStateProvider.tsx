@@ -13,13 +13,6 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXIsNext] = useState(true);
 
-    const initialSavedData = {
-        history,
-        stepNumber,
-        xIsNext,
-    };
-    const [savedData, setSavedData] = useState<GameData>(initialSavedData);
-
     const clickSquare = useCallback(
         (index: number) => {
             const newHistory = history.slice(0, stepNumber + 1);
@@ -43,7 +36,7 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         setXIsNext(step % 2 === 0);
     };
 
-    const saveLoadGameData = (game: GameData) => {
+    const loadGame = (game: GameData) => {
         setHistory(game.history);
         changeStage(game.stepNumber);
     };
@@ -56,7 +49,7 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                 xIsNext,
                 clickSquare,
                 changeStage,
-                saveLoadGameData,
+                loadGame,
             }}
         >
             {children}
