@@ -1,18 +1,26 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import axios from 'axios';
 import { GameData } from '../types/game';
+import useSavedData from '../utils/hooks/useSavedData';
+import axios from 'axios';
 
 type Props = {
     data: GameData;
 };
 
 const Load: NextPage<Props> = ({ data }) => {
-    const [gameData, setGameData] = useState(data);
+    const savedGameData = useSavedData();
+    const [gameData, setGameData] = useState<GameData>(savedGameData);
+
+    useEffect(() => {
+        if (gameData.stepNumber == 0) {
+            setGameData(data);
+        }
+    }, [data, gameData]);
 
     const loadGame = () => {
         Router.push('/play?load=true');
@@ -55,6 +63,17 @@ const Load: NextPage<Props> = ({ data }) => {
     );
 };
 
+export const getServerSideProps = async () => {
+    const response = await axios.get('http://localhost:3000/api/game');
+    const game: GameData = response.data;
+
+    if (response.status == 200) {
+        return {
+            props: { data: game },
+        };
+    }
+};
+
 const LoadLayout = styled.div`
     display: flex;
     flex-direction: column;
@@ -76,16 +95,5 @@ const ListItem = styled.div`
     }
     cursor: pointer;
 `;
-
-export const getServerSideProps = async () => {
-    const response = await axios.get('http://localhost:3000/api/game');
-    const game: GameData = response.data;
-
-    if (response.status == 200) {
-        return {
-            props: { data: game },
-        };
-    }
-};
 
 export default Load;

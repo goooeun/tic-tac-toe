@@ -2,8 +2,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import router from 'next/router';
-import axios from 'axios';
+import router, { useRouter } from 'next/router';
 
 import useHistory from '../utils/hooks/useHistory';
 import useStepNumber from '../utils/hooks/useStepNumber';
@@ -18,35 +17,33 @@ import { MdSave, MdDownload, MdHome } from 'react-icons/md';
 import useSavedData from '../utils/hooks/useSavedData';
 import useSavedDataActions from '../utils/hooks/useSavedDataActions';
 
-function Game() {
+type Props = {
+    savedGame: GameData;
+};
+
+function Game({ savedGame }: Props) {
+    const { changeStage, loadGame } = useActions();
+    const { saveGame } = useSavedDataActions();
+    const savedData = useSavedData();
+
+    const router = useRouter();
+    const { load } = router.query;
+
+    const [gameData, setGameData] = useState<GameData>(
+        savedData.stepNumber === 0 ? savedGame : savedData
+    );
+
+    useEffect(() => {
+        if (!load) return;
+        loadGame(gameData);
+    }, [load]);
+
     const history = useHistory();
     const stepNumber = useStepNumber();
     const xIsNext = useXIsNext();
 
-    const { changeStage, loadGame } = useActions();
     const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
-
-    const savedGameData = useSavedData();
-    const { saveGame } = useSavedDataActions();
-    const [gameData, setGameData] = useState<GameData>();
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('/api/game');
-            setGameData(response.data);
-        } catch (e) {
-            // console.log(e);
-        }
-    };
-
-    useEffect(() => {
-        if (savedGameData.stepNumber == 0) {
-            fetchData();
-        } else {
-            setGameData(savedGameData);
-        }
-    }, [savedGameData]);
 
     const moves = history.map((step: number, move: number) => {
         const desc = move ? 'Go to move #' + move : 'Go to game start';
