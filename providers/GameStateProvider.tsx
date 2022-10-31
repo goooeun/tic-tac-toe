@@ -1,13 +1,10 @@
 import { useState, useCallback } from 'react';
 import GameStateContext from '../contexts/GameStateContext';
 import calculateWinner from '../utils/calculateWinner';
-
-type squaresType = {
-    squares: (string | null)[];
-};
+import { GameData, SquaresType } from '../components/types';
 
 const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-    const [history, setHistory] = useState<squaresType[]>([
+    const [history, setHistory] = useState<SquaresType[]>([
         {
             squares: Array(9).fill(null),
         },
@@ -39,9 +36,21 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         setXIsNext(step % 2 === 0);
     };
 
+    const saveLoadGameData = (game: GameData) => {
+        setHistory(game.history);
+        changeStage(game.stepNumber);
+    };
+
     return (
         <GameStateContext.Provider
-            value={{ history, stepNumber, xIsNext, clickSquare, changeStage }}
+            value={{
+                history,
+                stepNumber,
+                xIsNext,
+                clickSquare,
+                changeStage,
+                saveLoadGameData,
+            }}
         >
             {children}
         </GameStateContext.Provider>

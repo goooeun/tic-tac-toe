@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import GameStateContext from '../../contexts/GameStateContext';
 
 export default function useActions() {
-    const { clickSquare, changeStage } = useContext(GameStateContext);
+    const { clickSquare, changeStage, saveLoadGameData } =
+        useContext(GameStateContext);
 
-    return { clickSquare, changeStage };
+    return { clickSquare, changeStage, saveLoadGameData };
 }

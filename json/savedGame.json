@@ -1,0 +1,27 @@
+{
+    "game": {
+        "stepNumber": 3,
+        "xIsNext": false,
+        "history": [
+            {
+                "squares": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            },
+            {
+                "squares": ["X", null, null, null, null, null, null, null, null]
+            },
+            { "squares": ["X", "O", null, null, null, null, null, null, null] },
+            { "squares": ["X", "O", null, null, null, null, null, null, "X"] }
+        ],
+        "date": "22년 10월 28일 오전 2:25:42"
+    }
+}

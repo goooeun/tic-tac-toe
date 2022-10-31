@@ -31,7 +31,7 @@ const ButtonGroup = styled.div`
     display: flex;
     flex-direction: column;
     width: 170px;
-    .button:first-child {
+    .button:first-of-type {
         margin-bottom: 8px;
     }
 `;

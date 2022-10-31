@@ -36,7 +36,7 @@ const SquareButton = styled.button`
         background-color: #eee;
     }
     margin-bottom: 8px;
-    &:nth-child(3n-1) {
+    &:nth-of-type(3n-1) {
         margin-left: 8px;
         margin-right: 8px;
     }
