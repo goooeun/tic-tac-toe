@@ -62,9 +62,10 @@ const LoadLayout = styled.div`
 `;
 
 const ListItem = styled.div`
+    width: 170px;
     list-style: none;
     margin: 8px 0;
-    padding: 8px;
+    padding: 8px 10px;
     border: 1px solid #888;
     border-radius: 4px;
     display: flex;
