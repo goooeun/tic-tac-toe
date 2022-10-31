@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import { GameData } from '../components/types';
+import { GameData } from '../types/game';
 
 type Props = {
     data: GameData;
@@ -30,7 +30,6 @@ const Load: NextPage<Props> = ({ data }) => {
                     <ListItem onClick={loadGame}>
                         <div>Round : {gameData.stepNumber}</div>
                         <div>Next Player : {gameData.xIsNext ? 'X' : 'O'}</div>
-                        <div>Saved Time : {gameData.date}</div>
                     </ListItem>
                 ) : (
                     <div

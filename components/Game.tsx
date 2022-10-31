@@ -12,11 +12,19 @@ import useActions from '../utils/hooks/useActions';
 import calculateWinner from '../utils/calculateWinner';
 
 import Board from './Board';
-import { GameData } from './types';
+import { GameData } from '../types/game';
 
 import { MdSave, MdDownload, MdHome } from 'react-icons/md';
 
 function Game() {
+    const history = useHistory();
+    const stepNumber = useStepNumber();
+    const xIsNext = useXIsNext();
+
+    const { changeStage, saveLoadGameData } = useActions();
+    const current = history[stepNumber];
+    const winner = calculateWinner(current.squares);
+
     const [gameData, setGameData] = useState<GameData>();
 
     const fetchData = async () => {
@@ -31,14 +39,6 @@ function Game() {
     useEffect(() => {
         fetchData();
     }, []);
-
-    const history = useHistory();
-    const stepNumber = useStepNumber();
-    const xIsNext = useXIsNext();
-
-    const { changeStage, saveLoadGameData } = useActions();
-    const current = history[stepNumber];
-    const winner = calculateWinner(current.squares);
 
     const moves = history.map((step: number, move: number) => {
         const desc = move ? 'Go to move #' + move : 'Go to game start';
@@ -56,8 +56,11 @@ function Game() {
         ? 'Congratulations🎉  Winner is ' + winner
         : 'Next player: ' + (xIsNext ? 'X' : 'O');
 
+    const [save, setSave] = useState(false);
+
     const saveGame = () => {
         if (confirm('Do you want to save the game?')) {
+            setSave(true);
             saveLoadGameData({
                 history,
                 stepNumber,
@@ -72,7 +75,11 @@ function Game() {
     };
 
     const handleBackButton = () => {
-        if (confirm('The game is not saved. Are you really going home?')) {
+        if (!save) {
+            if (confirm('The game is not saved. Are you really going home?')) {
+                router.push('/');
+            }
+        } else {
             router.push('/');
         }
     };
@@ -80,7 +87,10 @@ function Game() {
     return (
         <GameLayout>
             <ButtonGroup>
-                <button onClick={saveGame}>
+                <button
+                    onClick={saveGame}
+                    disabled={stepNumber == 0 ? true : false}
+                >
                     <MdSave />
                     SAVE
                 </button>

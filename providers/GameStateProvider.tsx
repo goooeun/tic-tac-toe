@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import GameStateContext from '../contexts/GameStateContext';
 import calculateWinner from '../utils/calculateWinner';
-import { GameData, SquaresType } from '../components/types';
+import { GameData, SquaresType } from '../types/game';
 
 const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [history, setHistory] = useState<SquaresType[]>([
@@ -12,6 +12,13 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXIsNext] = useState(true);
+
+    const initialSavedData = {
+        history,
+        stepNumber,
+        xIsNext,
+    };
+    const [savedData, setSavedData] = useState<GameData>(initialSavedData);
 
     const clickSquare = useCallback(
         (index: number) => {
