@@ -1,16 +1,25 @@
-import { useState } from 'react';
-import SavedGameStateContext from '../contexts/SavedGameStateContext';
+import { createContext, useState } from 'react';
 import { GameData } from '../types/game';
+
+type ISavedGameStateContext = {
+    savedData: GameData;
+    saveGame: (game: GameData) => void;
+};
+
+const initialSavedData: GameData = {
+    stepNumber: 0,
+    xIsNext: false,
+    history: [],
+};
+
+const SavedGameStateContext = createContext<ISavedGameStateContext>({
+    savedData: initialSavedData,
+    saveGame: () => {},
+});
 
 const SavedGameStateProvider: React.FC<React.PropsWithChildren> = ({
     children,
 }) => {
-    const initialSavedData: GameData = {
-        stepNumber: 0,
-        xIsNext: false,
-        history: [],
-    };
-
     const [savedData, setSavedData] = useState<GameData>(initialSavedData);
 
     const saveGame = (game: GameData) => {
@@ -24,4 +33,4 @@ const SavedGameStateProvider: React.FC<React.PropsWithChildren> = ({
     );
 };
 
-export default SavedGameStateProvider;
+export { SavedGameStateContext, SavedGameStateProvider };

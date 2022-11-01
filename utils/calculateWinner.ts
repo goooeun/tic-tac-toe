@@ -1,5 +1,3 @@
-import { SquaresType } from '../types/game';
-
 export default function calculateWinner(squares: (string | null)[]) {
     const lines = [
         [0, 1, 2],

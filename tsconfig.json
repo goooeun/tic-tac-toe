@@ -16,12 +16,6 @@
         "incremental": true,
         "types": ["@emotion/react/types/css-prop"]
     },
-    "include": [
-        "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        "contexts/SavedGameStateContext.js",
-        "contexts/GameStateContext.js"
-    ],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
     "exclude": ["node_modules"]
 }

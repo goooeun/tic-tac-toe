@@ -2,29 +2,28 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
-import useHistory from '../utils/hooks/useHistory';
-import useStepNumber from '../utils/hooks/useStepNumber';
-import useXIsNext from '../utils/hooks/useXIsNext';
-import useActions from '../utils/hooks/useActions';
+import { useGameState, useSavedGameState } from '../utils/hooks/useGameState';
+import {
+    useGameStateActions,
+    useSavedDataActions,
+} from '../utils/hooks/useActions';
 import calculateWinner from '../utils/calculateWinner';
 
 import Board from './Board';
-import { GameData } from '../types/game';
+import { GameData, SquaresType } from '../types/game';
 
 import { MdSave, MdDownload, MdHome } from 'react-icons/md';
-import useSavedData from '../utils/hooks/useSavedData';
-import useSavedDataActions from '../utils/hooks/useSavedDataActions';
 
 type Props = {
     savedGame: GameData;
 };
 
 function Game({ savedGame }: Props) {
-    const { changeStage, loadGame } = useActions();
+    const { changeStage, loadGame } = useGameStateActions();
     const { saveGame } = useSavedDataActions();
-    const savedData = useSavedData();
+    const { savedData } = useSavedGameState();
 
     const router = useRouter();
     const { load } = router.query;
@@ -38,14 +37,11 @@ function Game({ savedGame }: Props) {
         loadGame(gameData);
     }, [load]);
 
-    const history = useHistory();
-    const stepNumber = useStepNumber();
-    const xIsNext = useXIsNext();
-
+    const { history, stepNumber, xIsNext } = useGameState();
     const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step: number, move: number) => {
+    const moves = history.map((step: SquaresType, move: number) => {
         const desc = move ? 'Go to move #' + move : 'Go to game start';
         const clickMove = () => {
             changeStage(move);
