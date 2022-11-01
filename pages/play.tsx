@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { NextPage } from 'next';
 import Game from '../components/Game';
-import GameStateProvider from '../providers/GameStateProvider';
+import { GameStateProvider } from '../contexts/GameStateContext';
 import { GameData } from '../types/game';
 
 type Props = {

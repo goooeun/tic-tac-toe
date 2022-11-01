@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import useActions from '../utils/hooks/useActions';
+import { useGameStateActions } from '../utils/hooks/useActions';
 
 type SquareProps = {
     index: number;
@@ -7,7 +7,7 @@ type SquareProps = {
 };
 
 const Square = ({ index, value }: SquareProps) => {
-    const { clickSquare } = useActions();
+    const { clickSquare } = useGameStateActions();
     const click = () => {
         clickSquare(index);
     };

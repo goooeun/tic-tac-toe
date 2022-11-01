@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import SavedGameStateProvider from '../providers/SavedGameStateProvider';
+import { SavedGameStateProvider } from '../contexts/SavedGameStateContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
