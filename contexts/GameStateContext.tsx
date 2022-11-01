@@ -24,6 +24,7 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [history, setHistory] = useState<SquaresType[]>([
         {
             squares: Array(9).fill(null),
+            location: 0,
         },
     ]);
 
@@ -41,7 +42,7 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             }
             squares[index] = xIsNext ? 'X' : 'O';
 
-            setHistory([...newHistory, { squares }]);
+            setHistory([...newHistory, { squares, location: index }]);
             setStepNumber(newHistory.length);
             setXIsNext(!xIsNext);
         },

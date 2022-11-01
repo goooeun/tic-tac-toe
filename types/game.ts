@@ -6,4 +6,5 @@ export interface GameData {
 
 export interface SquaresType {
     squares: (string | null)[];
+    location: number;
 }

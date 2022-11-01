@@ -42,7 +42,12 @@ function Game({ savedGame }: Props) {
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step: SquaresType, move: number) => {
-        const desc = move ? 'Go to move #' + move : 'Go to game start';
+        const location = step.location;
+        const coordinateX = (location % 3) + 1;
+        const coordinateY = Math.floor(location / 3) + 1;
+        const desc = move
+            ? `Go to move #${move} (${coordinateX}, ${coordinateY})`
+            : 'Go to game start';
         const clickMove = () => {
             changeStage(move);
         };
