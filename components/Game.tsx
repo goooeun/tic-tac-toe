@@ -15,6 +15,7 @@ import Board from './Board';
 import { GameData, SquaresType } from '../types/game';
 
 import { MdSave, MdDownload, MdHome } from 'react-icons/md';
+import { TbSortAscending2, TbSortDescending2 } from 'react-icons/tb';
 
 type Props = {
     savedGame: GameData;
@@ -42,8 +43,12 @@ function Game({ savedGame }: Props) {
     const { history, stepNumber, xIsNext } = useGameState();
     const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
+    const [sort, setSort] = useState('asc');
 
     const moves = history.map((step: SquaresType, move: number) => {
+        if (sort === 'desc') {
+            move = history.length - 1 - move;
+        }
         const location = step.location;
         const coordinateX = (location % 3) + 1;
         const coordinateY = Math.floor(location / 3) + 1;
@@ -103,6 +108,10 @@ function Game({ savedGame }: Props) {
         }
     };
 
+    const handleSort = () => {
+        setSort(sort === 'desc' ? 'asc' : 'desc');
+    };
+
     return (
         <GameLayout>
             <ButtonGroup>
@@ -131,6 +140,16 @@ function Game({ savedGame }: Props) {
                 {status}
             </div>
             <Board squares={current.squares} />
+            <TitleBox>
+                <h3>Move History</h3>
+                <button onClick={handleSort}>
+                    {sort === 'desc' ? (
+                        <TbSortDescending2 />
+                    ) : (
+                        <TbSortAscending2 />
+                    )}
+                </button>
+            </TitleBox>
             <div
                 css={css`
                     display: flex;
@@ -157,7 +176,7 @@ const ButtonGroup = styled.div`
 `;
 
 const Button = styled.button`
-    width: 160px;
+    width: 256px;
     &.active {
         background-color: #fff;
         color: #333;
@@ -166,6 +185,21 @@ const Button = styled.button`
         &:hover {
             background-color: #ddd;
         }
+    }
+`;
+
+const TitleBox = styled.div`
+    border-top: 1px solid #ddd;
+    width: 256px;
+    padding: 20px 0 0;
+    text-align: center;
+    position: relative;
+    button {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        font-size: 1.2em;
+        padding: 6px;
     }
 `;
 
