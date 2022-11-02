@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { useGameState, useSavedGameState } from '../utils/hooks/useGameState';
@@ -25,6 +25,8 @@ function Game({ savedGame }: Props) {
     const { saveGame } = useSavedDataActions();
     const { savedData } = useSavedGameState();
 
+    const activeHistory = useRef(-1);
+
     const router = useRouter();
     const { load } = router.query;
 
@@ -45,16 +47,26 @@ function Game({ savedGame }: Props) {
         const location = step.location;
         const coordinateX = (location % 3) + 1;
         const coordinateY = Math.floor(location / 3) + 1;
+
         const desc = move
             ? `Go to move #${move} (${coordinateX}, ${coordinateY})`
             : 'Go to game start';
+
+        const isActive = activeHistory.current === move ? true : false;
+
         const clickMove = () => {
+            activeHistory.current = move;
             changeStage(move);
         };
+
         return (
-            <button key={move} onClick={clickMove}>
+            <Button
+                key={move}
+                onClick={clickMove}
+                className={isActive ? 'active' : ''}
+            >
                 {desc}
-            </button>
+            </Button>
         );
     });
 
@@ -142,6 +154,19 @@ const ButtonGroup = styled.div`
     display: flex;
     justify-content: center;
     gap: 8px;
+`;
+
+const Button = styled.button`
+    width: 160px;
+    &.active {
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #333;
+        font-weight: bold;
+        &:hover {
+            background-color: #ddd;
+        }
+    }
 `;
 
 export default Game;
