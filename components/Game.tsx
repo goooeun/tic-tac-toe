@@ -50,11 +50,11 @@ function Game({ savedGame }: Props) {
             move = history.length - 1 - move;
         }
         const location = step.location;
-        const coordinateX = (location % 3) + 1;
-        const coordinateY = Math.floor(location / 3) + 1;
+        const col = (location % 3) + 1;
+        const row = Math.floor(location / 3) + 1;
 
         const desc = move
-            ? `Go to move #${move} (${coordinateX}, ${coordinateY})`
+            ? `Go to move #${move} (${col}, ${row})`
             : 'Go to game start';
 
         const isActive = activeHistory.current === move ? true : false;
