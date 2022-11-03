@@ -3,11 +3,29 @@ import Square from './Square';
 
 type BoardProps = {
     squares: (string | null)[];
+    gameResult: {
+        square: string | null;
+        lines: number[];
+    } | null;
 };
 
-const Board = ({ squares }: BoardProps) => {
+const Board = ({ squares, gameResult }: BoardProps) => {
     const renderSquare = (index: number) => {
-        return <Square key={index} index={index} value={squares[index]} />;
+        let active = '';
+        if (gameResult) {
+            const winningLine = gameResult.lines;
+            if (winningLine.indexOf(index) > -1) {
+                active = 'active';
+            }
+        }
+        return (
+            <Square
+                className={active}
+                key={index}
+                index={index}
+                value={squares[index]}
+            />
+        );
     };
 
     const boardRows = () => {

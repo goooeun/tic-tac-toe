@@ -42,7 +42,7 @@ function Game({ savedGame }: Props) {
 
     const { history, stepNumber, xIsNext } = useGameState();
     const current = history[stepNumber];
-    const winner = calculateWinner(current.squares);
+    const gameResult = calculateWinner(current.squares);
     const [sort, setSort] = useState('asc');
 
     const moves = history.map((step: SquaresType, move: number) => {
@@ -75,8 +75,8 @@ function Game({ savedGame }: Props) {
         );
     });
 
-    const status = winner
-        ? 'Congratulations🎉  Winner is ' + winner
+    const status = gameResult
+        ? 'Congratulations🎉  Winner is ' + gameResult.square
         : 'Next player: ' + (xIsNext ? 'X' : 'O');
 
     const [save, setSave] = useState(false);
@@ -139,7 +139,7 @@ function Game({ savedGame }: Props) {
             >
                 {status}
             </div>
-            <Board squares={current.squares} />
+            <Board gameResult={gameResult} squares={current.squares} />
             <TitleBox>
                 <h3>Move History</h3>
                 <button onClick={handleSort}>
