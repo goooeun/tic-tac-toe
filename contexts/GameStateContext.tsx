@@ -1,15 +1,30 @@
-import { useState, useCallback } from 'react';
-import GameStateContext from '../contexts/GameStateContext';
+import { createContext, useState, useCallback } from 'react';
+import { GameData, SquaresType } from '../types/game';
 import calculateWinner from '../utils/calculateWinner';
 
-type squaresType = {
-    squares: (string | null)[];
+type IGameStateContext = {
+    history: SquaresType[];
+    stepNumber: number;
+    xIsNext: boolean;
+    clickSquare: (index: number) => void;
+    changeStage: (step: number) => void;
+    loadGame: (game: GameData) => void;
 };
 
+const GameStateContext = createContext<IGameStateContext>({
+    history: [],
+    stepNumber: 0,
+    xIsNext: true,
+    clickSquare: () => {},
+    changeStage: () => {},
+    loadGame: () => {},
+});
+
 const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-    const [history, setHistory] = useState<squaresType[]>([
+    const [history, setHistory] = useState<SquaresType[]>([
         {
             squares: Array(9).fill(null),
+            location: 0,
         },
     ]);
 
@@ -27,7 +42,7 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             }
             squares[index] = xIsNext ? 'X' : 'O';
 
-            setHistory([...newHistory, { squares }]);
+            setHistory([...newHistory, { squares, location: index }]);
             setStepNumber(newHistory.length);
             setXIsNext(!xIsNext);
         },
@@ -39,13 +54,25 @@ const GameStateProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         setXIsNext(step % 2 === 0);
     };
 
+    const loadGame = (game: GameData) => {
+        setHistory(game.history);
+        changeStage(game.stepNumber);
+    };
+
     return (
         <GameStateContext.Provider
-            value={{ history, stepNumber, xIsNext, clickSquare, changeStage }}
+            value={{
+                history,
+                stepNumber,
+                xIsNext,
+                clickSquare,
+                changeStage,
+                loadGame,
+            }}
         >
             {children}
         </GameStateContext.Provider>
     );
 };
 
-export default GameStateProvider;
+export { GameStateContext, GameStateProvider };

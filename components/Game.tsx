@@ -1,76 +1,131 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import router from 'next/router';
-import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 
-import useHistory from '../utils/hooks/useHistory';
-import useStepNumber from '../utils/hooks/useStepNumber';
-import useXIsNext from '../utils/hooks/useXIsNext';
-import useActions from '../utils/hooks/useActions';
+import { useGameState, useSavedGameState } from '../utils/hooks/useGameState';
+import {
+    useGameStateActions,
+    useSavedDataActions,
+} from '../utils/hooks/useActions';
 import calculateWinner from '../utils/calculateWinner';
 
 import Board from './Board';
-import SavedGameListPopup from './SavedGameListPopup';
+import { GameData, SquaresType } from '../types/game';
 
 import { MdSave, MdDownload, MdHome } from 'react-icons/md';
-import Link from 'next/link';
+import { TbSortAscending2, TbSortDescending2 } from 'react-icons/tb';
 
-function Game() {
-    const history = useHistory();
-    const stepNumber = useStepNumber();
-    const xIsNext = useXIsNext();
+type Props = {
+    savedGame: GameData;
+};
 
-    const { changeStage } = useActions();
+function Game({ savedGame }: Props) {
+    const { changeStage, loadGame } = useGameStateActions();
+    const { saveGame } = useSavedDataActions();
+    const { savedData } = useSavedGameState();
 
+    const activeHistory = useRef(-1);
+
+    const router = useRouter();
+    const { load } = router.query;
+
+    const [gameData, setGameData] = useState<GameData>(
+        savedData.stepNumber === 0 ? savedGame : savedData
+    );
+
+    useEffect(() => {
+        if (!load) return;
+        loadGame(gameData);
+    }, [load]);
+
+    const { history, stepNumber, xIsNext } = useGameState();
     const current = history[stepNumber];
-    const winner = calculateWinner(current.squares);
+    const gameResult = calculateWinner(current.squares);
+    const [sort, setSort] = useState('asc');
 
-    const moves = history.map((step: number, move: number) => {
-        const desc = move ? 'Go to move #' + move : 'Go to game start';
+    const moves = history.map((step: SquaresType, move: number) => {
+        if (sort === 'desc') {
+            move = history.length - 1 - move;
+        }
+        const location = step.location;
+        const col = (location % 3) + 1;
+        const row = Math.floor(location / 3) + 1;
+
+        const desc = move
+            ? `Go to move #${move} (${col}, ${row})`
+            : 'Go to game start';
+
+        const isActive = activeHistory.current === move ? true : false;
+
         const clickMove = () => {
+            activeHistory.current = move;
             changeStage(move);
         };
+
         return (
-            <button key={move} onClick={clickMove}>
+            <Button
+                key={move}
+                onClick={clickMove}
+                className={isActive ? 'active' : ''}
+            >
                 {desc}
-            </button>
+            </Button>
         );
     });
 
-    const status = winner
-        ? 'Congratulations🎉 Winner is ' + winner
-        : 'Next player: ' + (xIsNext ? 'X' : 'O');
+    const nextPlayerMessage =
+        stepNumber === 9 ? 'Draw' : 'Next player: ' + (xIsNext ? 'X' : 'O');
 
-    const [isOpen, setIsOpen] = useState(false);
-    const openPopup = () => {
-        setIsOpen(true);
-    };
-    const closePopup = () => {
-        setIsOpen(false);
-    };
+    const status = gameResult
+        ? 'Congratulations🎉  Winner is ' + gameResult.square
+        : nextPlayerMessage;
 
-    const saveGame = () => {
+    const [save, setSave] = useState(false);
+
+    const clickSaveGame = () => {
         if (confirm('Do you want to save the game?')) {
-            console.log('game save!');
+            setSave(true);
+            const saveData: GameData = {
+                history,
+                stepNumber,
+                xIsNext,
+            };
+            saveGame(saveData);
+        }
+    };
+    const clickLoadGame = () => {
+        if (confirm('Do you want to load the game?')) {
+            loadGame(gameData);
         }
     };
 
     const handleBackButton = () => {
-        if (confirm('The game is not saved. Are you really going home?')) {
+        if (!save) {
+            if (confirm('The game is not saved. Are you really going home?')) {
+                router.push('/');
+            }
+        } else {
             router.push('/');
         }
+    };
+
+    const handleSort = () => {
+        setSort(sort === 'desc' ? 'asc' : 'desc');
     };
 
     return (
         <GameLayout>
             <ButtonGroup>
-                <button onClick={saveGame}>
+                <button
+                    onClick={clickSaveGame}
+                    disabled={stepNumber == 0 ? true : false}
+                >
                     <MdSave />
                     SAVE
                 </button>
-                <button onClick={openPopup}>
+                <button onClick={clickLoadGame}>
                     <MdDownload />
                     LOAD
                 </button>
@@ -87,7 +142,17 @@ function Game() {
             >
                 {status}
             </div>
-            <Board squares={current.squares} />
+            <Board gameResult={gameResult} squares={current.squares} />
+            <TitleBox>
+                <h3>Move History</h3>
+                <button onClick={handleSort}>
+                    {sort === 'desc' ? (
+                        <TbSortDescending2 />
+                    ) : (
+                        <TbSortAscending2 />
+                    )}
+                </button>
+            </TitleBox>
             <div
                 css={css`
                     display: flex;
@@ -96,7 +161,6 @@ function Game() {
             >
                 {moves}
             </div>
-            {isOpen && <SavedGameListPopup closePopup={closePopup} />}
         </GameLayout>
     );
 }
@@ -114,20 +178,32 @@ const ButtonGroup = styled.div`
     gap: 8px;
 `;
 
-interface GameData {
-    id: number;
-    stepNumber: number;
-    xIsNext: boolean;
-    data: (string | null)[];
-    date: Date;
-}
+const Button = styled.button`
+    width: 256px;
+    &.active {
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #333;
+        font-weight: bold;
+        &:hover {
+            background-color: #ddd;
+        }
+    }
+`;
 
-export const getServerSideProps = async () => {
-    const response = await axios.get('http://localhost:3000/api/list');
-    const gameData = response.data;
-    return {
-        props: { gameData },
-    };
-};
+const TitleBox = styled.div`
+    border-top: 1px solid #ddd;
+    width: 256px;
+    padding: 20px 0 0;
+    text-align: center;
+    position: relative;
+    button {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        font-size: 1.2em;
+        padding: 6px;
+    }
+`;
 
 export default Game;

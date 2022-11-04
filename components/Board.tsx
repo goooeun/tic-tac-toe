@@ -3,32 +3,47 @@ import Square from './Square';
 
 type BoardProps = {
     squares: (string | null)[];
+    gameResult: {
+        square: string | null;
+        lines: number[];
+    } | null;
 };
 
-const Board = ({ squares }: BoardProps) => {
+const Board = ({ squares, gameResult }: BoardProps) => {
     const renderSquare = (index: number) => {
-        return <Square index={index} value={squares[index]} />;
+        let active = '';
+        if (gameResult) {
+            const winningLine = gameResult.lines;
+            if (winningLine.indexOf(index) > -1) {
+                active = 'active';
+            }
+        }
+        return (
+            <Square
+                className={active}
+                key={index}
+                index={index}
+                value={squares[index]}
+            />
+        );
     };
 
-    return (
-        <div>
-            <BoardRow>
-                {renderSquare(0)}
-                {renderSquare(1)}
-                {renderSquare(2)}
-            </BoardRow>
-            <BoardRow>
-                {renderSquare(3)}
-                {renderSquare(4)}
-                {renderSquare(5)}
-            </BoardRow>
-            <BoardRow>
-                {renderSquare(6)}
-                {renderSquare(7)}
-                {renderSquare(8)}
-            </BoardRow>
-        </div>
-    );
+    const boardRows = () => {
+        let rows = [];
+        let squareIndex = 0;
+        for (let i = 0; i < 3; i++) {
+            let squares = [];
+            for (let j = 0; j < 3; j++) {
+                squares.push(renderSquare(squareIndex));
+                squareIndex++;
+            }
+            rows.push(<BoardRow key={i}>{squares}</BoardRow>);
+        }
+
+        return rows;
+    };
+
+    return <div>{boardRows()}</div>;
 };
 
 const BoardRow = styled.div`

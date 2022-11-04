@@ -1,13 +1,30 @@
+import axios from 'axios';
 import type { NextPage } from 'next';
 import Game from '../components/Game';
-import GameStateProvider from '../providers/GameStateProvider';
+import { GameStateProvider } from '../contexts/GameStateContext';
+import { GameData } from '../types/game';
 
-const Play: NextPage = () => {
+type Props = {
+    game: GameData;
+};
+
+const Play: NextPage<Props> = ({ game }) => {
     return (
         <GameStateProvider>
-            <Game />
+            <Game savedGame={game} />
         </GameStateProvider>
     );
+};
+
+export const getStaticProps = async () => {
+    const response = await axios.get('http://localhost:3000/api/game');
+    const game: GameData = response.data;
+
+    if (response.status == 200) {
+        return {
+            props: { game },
+        };
+    }
 };
 
 export default Play;

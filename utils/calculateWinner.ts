@@ -1,6 +1,4 @@
-import useHistory from './hooks/useHistory';
-
-export default function calculateWinner(squares) {
+export default function calculateWinner(squares: (string | null)[]) {
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -18,7 +16,7 @@ export default function calculateWinner(squares) {
             squares[a] === squares[b] &&
             squares[a] === squares[c]
         ) {
-            return squares[a];
+            return { square: squares[a], lines: lines[i] };
         }
     }
     return null;

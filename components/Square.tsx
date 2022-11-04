@@ -1,17 +1,22 @@
 import styled from '@emotion/styled';
-import useActions from '../utils/hooks/useActions';
+import { useGameStateActions } from '../utils/hooks/useActions';
 
 type SquareProps = {
     index: number;
     value: string | null;
+    className: string;
 };
 
-const Square = ({ index, value }: SquareProps) => {
-    const { clickSquare } = useActions();
+const Square = ({ index, value, className }: SquareProps) => {
+    const { clickSquare } = useGameStateActions();
     const click = () => {
         clickSquare(index);
     };
-    return <SquareButton onClick={click}>{value}</SquareButton>;
+    return (
+        <SquareButton className={className} onClick={click}>
+            {value}
+        </SquareButton>
+    );
 };
 
 const SquareButton = styled.button`
@@ -28,6 +33,16 @@ const SquareButton = styled.button`
     text-align: center;
     width: 80px;
     height: 80px;
+    &.active {
+        color: #fff;
+        background-color: #64835c;
+        &:focus {
+            background-color: #64835c;
+        }
+        &:hover {
+            background-color: #2e492e;
+        }
+    }
     &:hover {
         background-color: #aaa;
     }
@@ -36,7 +51,7 @@ const SquareButton = styled.button`
         background-color: #eee;
     }
     margin-bottom: 8px;
-    &:nth-child(3n-1) {
+    &:nth-of-type(3n-1) {
         margin-left: 8px;
         margin-right: 8px;
     }

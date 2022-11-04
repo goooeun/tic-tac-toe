@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import Game from '../components/Game';
-import GameStateProvider from '../providers/GameStateProvider';
 
 const Home: NextPage = () => {
     return (
@@ -31,7 +29,7 @@ const ButtonGroup = styled.div`
     display: flex;
     flex-direction: column;
     width: 170px;
-    .button:first-child {
+    .button:first-of-type {
         margin-bottom: 8px;
     }
 `;

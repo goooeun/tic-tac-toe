@@ -24,3 +24,9 @@ button:hover,
     background-color: #666;
     cursor: pointer;
 }
+
+button:disabled,
+.button:disabled {
+    background-color: #e5e5e5;
+    color: #aaa;
+}
