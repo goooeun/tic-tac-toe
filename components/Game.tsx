@@ -75,9 +75,12 @@ function Game({ savedGame }: Props) {
         );
     });
 
+    const nextPlayerMessage =
+        stepNumber === 9 ? 'Draw' : 'Next player: ' + (xIsNext ? 'X' : 'O');
+
     const status = gameResult
         ? 'Congratulations🎉  Winner is ' + gameResult.square
-        : 'Next player: ' + (xIsNext ? 'X' : 'O');
+        : nextPlayerMessage;
 
     const [save, setSave] = useState(false);
 
